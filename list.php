@@ -1,12 +1,15 @@
 <?php
+// List all Contacts
 function alex_crud_list () {
+
   global $wpdb;
-  $id = sanitize_key($_GET['id']);
 
+  // Deletes a contact
+  if(isset($_GET['delete']) && isset($_GET['id'])) {
+    $wpdb->delete( 'contacts', array( 'ID' => sanitize_key($_GET['id']) ) );
+  }
 
-  if(isset($_GET['delete']))
-    $wpdb->delete( 'contacts', array( 'ID' => $id) );
-
+  // List all contacts
   $rows = $wpdb->get_results("SELECT id,name,email from contacts");
 
 
@@ -15,36 +18,41 @@ function alex_crud_list () {
         type="text/css" rel="stylesheet" />
 
   <div class="wrap">
+
     <h2>Contacts</h2>
 
     <?php if(isset($_GET['delete'])){ ?>
 
-    <div class="updated"><p>Contact deleted</p></div>
+      <div class="updated"><p>Contact deleted</p></div>
 
     <?php } ?>
 
     <a href="<?php echo admin_url('admin.php?page=alex_crud_create'); ?>">Add New</a>
 
-    <?php
-
-    echo "<table class='wp-list-table widefat fixed'>";
-    echo "<tr><th>ID</th><th>Name</th><th>Email</th>><th>&nbsp;</th></tr>";
-
-    foreach ($rows as $row ){
-    	echo "<tr>";
-    	echo "<td>$row->id</td>";
-    	echo "<td>$row->name</td>";
-      echo "<td>$row->email</td>";
-    	echo "<td>";
-      echo "<a href='".admin_url('admin.php?page=alex_crud_update&id='.$row->id)."'>Update</a> | ";
-      echo "<a href='".admin_url('admin.php?page=alex_crud_list&delete&id='.$row->id)."'
-              onclick=\"return confirm('&iquest;Est&aacute;s seguro de borrar este elemento?')\">Delete</a>";
-      echo "</td>";
-    	echo "</tr>";
-    }
-
-    echo "</table>";
-    ?>
+    <table class='wp-list-table widefat fixed'>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>&nbsp;</th>
+      </tr>
+      <?php
+      foreach ($rows as $row ){
+      ?>
+        <tr>
+          <td><?php echo $row->id ?></td>
+          <td><?php echo $row->name ?></td>
+          <td><?php echo $row->email ?></td>
+          <td>
+            <a href="<?php echo admin_url("admin.php?page=alex_crud_update&id=".$row->id); ?>">Update</a> |
+            <a href="<?php echo admin_url("admin.php?page=alex_crud_list&delete&id=".$row->id); ?>"
+               onclick="return confirm('Are you sure?')">Delete</a>
+          </td>
+        </tr>
+      <?php
+      }
+      ?>
+    </table>
   </div>
 <?php
 }

@@ -1,4 +1,5 @@
 <?php
+// Create a Contact
 function alex_crud_create() {
 
     global $wpdb;
@@ -11,10 +12,9 @@ function alex_crud_create() {
         $wpdb->insert(
             'contacts',                                              // table
             array('id' => $id, 'name' => $name, 'email' => $email),  // data
-            array('%s', '%s', '%s')                                  // data format
+            array('%d', '%s', '%s')                                  // data format
             // %s (string), %d (integer) and %f (float)
         );
-
     }
     ?>
 
@@ -25,12 +25,12 @@ function alex_crud_create() {
 
       <h2>Add New Contact</h2>
 
-      <?php if (isset($_POST['insert'])): ?>
+      <?php if (isset($_POST['insert'])) { ?>
         <div class="updated">
           <p>Contact inserted</p>
         </div>
         <a href="<?php echo admin_url('admin.php?page=alex_crud_list')?>">&laquo; Back to contacts list</a>
-      <?php else: ?>
+      <?php } else { ?>
 
       <form method="post" action="<?php echo $_SERVER['REQUEST_URI'];?>">
 
@@ -40,7 +40,8 @@ function alex_crud_create() {
 
           <tr>
             <th>ID</th>
-            <td><input type="text" name="id" value="<?php echo $id;?>"/></td>
+            <td><input type="text" name="id" value="<?php echo $id;?>"
+                onkeypress="return event.charCode >= 48 && event.charCode <= 57"/><em>(numbers)</em></td>
           </tr>
           <tr>
             <th>Name</th>
@@ -52,10 +53,12 @@ function alex_crud_create() {
           </tr>
         </table>
 
-        <input type='submit' name="insert" value='Save' class='button'>
+        <input type="submit" name="insert" value="Save" class="button">
 
       </form>
-    <?php endif; ?>
+    <?php } ?>
+
     </div>
+
 <?php
 }
