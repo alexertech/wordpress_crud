@@ -34,6 +34,10 @@ CREATE TABLE `contacts` (
 Finally enable the plugin and enjoy.
 
 
+## TODO
+
+- Better field validations
+- Unique ID verification
 
 ## Authors
 
