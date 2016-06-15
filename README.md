@@ -1,4 +1,4 @@
-# wordpress-crud
+# Wordpress Simple CRUD
 
 Simple Wordpress CRUD for testing and learning proposes. Works inside the admin panel of any Wordpress installation and allows a user to Create Read Update and Delete records from an existing table in a database.
 
