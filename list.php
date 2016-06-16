@@ -9,7 +9,7 @@ function alex_crud_list () {
   if(isset($_GET['delete']) && isset($_GET['id'])) {
 
     // Get Values
-    $id = sanitize_key($_POST['id']);
+    $id = sanitize_key($_GET['id']);
 
     if (!preg_match("/^[0-9]*$/",$id))
       $msg = "error:Only numbers allowed in the ID";
