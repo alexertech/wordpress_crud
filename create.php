@@ -9,31 +9,41 @@ function alex_crud_create() {
       $name  = sanitize_text_field($_POST['name']);
       $email = sanitize_email($_POST['email']);
       $msg   = "";
-      $error = "";
 
       // Validations
-      if (!preg_match("/^[0-9]*$/",$id)) {
-        $error = "Only numbers allowed in the ID";
-      } elseif (!preg_match("/^[a-zA-Z ]*$/",$name)) {
-        $error = "Only letters and white space allowed in the name";
+      if (!preg_match("/^[0-9]*$/",$id) || empty($id)) {
+        $msg = "error:Only numbers allowed in the ID";
+      } elseif (!preg_match("/^[a-zA-Z ]*$/",$name) or empty($name)) {
+        $msg = "error:Only letters and white space allowed in the name";
       } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = "Invalid email format";
+        $msg = "error:Invalid email format";
       } else {
 
         global $wpdb;
-        $wpdb->insert(
-            'contacts',                                              // table
-            array('id' => $id, 'name' => $name, 'email' => $email),  // data
-            array('%d', '%s', '%s')                                  // data format
-            // %s (string), %d (integer) and %f (float)
+
+        // Check if the ID exists
+        $id_check = $wpdb->get_var(
+          $wpdb->prepare( "SELECT count(*) FROM contacts WHERE id = %d", $id )
         );
 
-        // This should go away and be treated with an object destructor
-        // or something like that.
-        $id    = "";
-        $name  = "";
-        $email = "";
-        $msg   = "Contact saved";
+        if ($id_check == 0) {
+          $wpdb->insert(
+              'contacts',                                              // table
+              array('id' => $id, 'name' => $name, 'email' => $email),  // data
+              array('%d', '%s', '%s')                                  // data format
+              // %s (string), %d (integer) and %f (float)
+          );
+
+          // This should go away and be treated with an object destructor
+          // or something like that.
+          $id    = "";
+          $name  = "";
+          $email = "";
+          $msg   = "updated:Contact saved";
+
+        } else {
+          $msg = "error:Duplicated ID, try another";
+        }
 
       }
 
@@ -48,10 +58,10 @@ function alex_crud_create() {
       <h2>Add New Contact</h2>
 
       <?php
-      if (!empty($msg))
-        echo "<div class=\"updated\"><p>$msg</p></div>";
-      if (!empty($error))
-        echo "<div class=\"error\"><p>$error</p></div>";
+      if (!empty($msg)) {
+        $fmsg = explode(':',$msg);
+        echo "<div class=\"{$fmsg[0]}\"><p>{$fmsg[1]}</p></div>";
+      }
       ?>
 
       <p>
@@ -65,8 +75,8 @@ function alex_crud_create() {
         <table class='wp-list-table widefat fixed'>
           <tr>
             <th>ID</th>
-            <td><input type="text" name="id" value="<?php echo $id;?>"
-                onkeypress="return event.charCode >= 48 && event.charCode <= 57"/>
+            <!-- TODO Javascript only numbers validation -->
+            <td><input type="text" name="id" value="<?php echo $id;?>"/>
                 <em>(numbers)</em></td>
           </tr>
           <tr>
