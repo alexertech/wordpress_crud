@@ -3,10 +3,20 @@
 function alex_crud_list () {
 
   global $wpdb;
+  $msg   = "";
 
   // Deletes a contact
   if(isset($_GET['delete']) && isset($_GET['id'])) {
-    $wpdb->delete( 'contacts', array( 'ID' => sanitize_key($_GET['id']) ) );
+
+    // Get Values
+    $id = sanitize_key($_POST['id']);
+
+    if (!preg_match("/^[0-9]*$/",$id))
+      $msg = "error:Only numbers allowed in the ID";
+    else {
+      $wpdb->delete( 'contacts', array( 'ID' => $id ) );
+      $msg = "updated:Contact deleted!";
+    }
   }
 
   // List all contacts
@@ -21,11 +31,13 @@ function alex_crud_list () {
 
     <h2>Contacts</h2>
 
-    <?php if(isset($_GET['delete'])){ ?>
+    <?php
+    if (!empty($msg)) {
+      $fmsg = explode(':',$msg);
+      echo "<div class=\"{$fmsg[0]}\"><p>{$fmsg[1]}</p></div>";
+    }
+    ?>
 
-      <div class="updated"><p>Contact deleted</p></div>
-
-    <?php } ?>
 
     <a href="<?php echo admin_url('admin.php?page=alex_crud_create'); ?>">Add New</a>
 
