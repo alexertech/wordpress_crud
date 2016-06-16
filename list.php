@@ -20,7 +20,9 @@ function alex_crud_list () {
   }
 
   // List all contacts
-  $rows = $wpdb->get_results("SELECT id,name,email from contacts");
+  $rows = $wpdb->get_results(
+    $wpdb->prepare("SELECT id,name,email from contacts")
+  );
 
 
 ?>
